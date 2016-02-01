@@ -1,0 +1,148 @@
+{% from "_formhelpers.html" import render_field %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+    <title>crispy</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+
+    <script type="text/javascript">
+    //<![CDATA[
+    //based on tab tutorial accessed from http://www.elated.com/articles/javascript-tabs/
+
+    var tabLinks = new Array();
+    var contentDivs = new Array();
+
+    function init() {
+
+      // Grab the tab links and content divs from the page
+      var tabListItems = document.getElementById('tabs').childNodes;
+      for ( var i = 0; i < tabListItems.length; i++ ) {
+        if ( tabListItems[i].nodeName == "LI" ) {
+          var tabLink = getFirstChildWithTagName( tabListItems[i], 'A' );
+          var id = getHash( tabLink.getAttribute('href') );
+          tabLinks[id] = tabLink;
+          contentDivs[id] = document.getElementById( id );
+        }
+      }
+
+      // Assign onclick events to the tab links, and
+      // highlight the first tab
+      var i = 0;
+
+      for ( var id in tabLinks ) {
+        tabLinks[id].onclick = showTab;
+        tabLinks[id].onfocus = function() { this.blur() };
+        if ( i == 0 ) tabLinks[id].className = 'selected';
+        i++;
+      }
+
+      // Hide all content divs except the first
+      var i = 0;
+
+      for ( var id in contentDivs ) {
+        if ( i != 0 ) contentDivs[id].className = 'tabContent hide';
+        i++;
+      }
+    }
+
+    function showTab() {
+      var selectedId = getHash( this.getAttribute('href') );
+
+      // Highlight the selected tab, and dim all others.
+      // Also show the selected content div, and hide all others.
+      for ( var id in contentDivs ) {
+        if ( id == selectedId ) {
+          tabLinks[id].className = 'selected';
+          contentDivs[id].className = 'tabContent';
+        } else {
+          tabLinks[id].className = '';
+          contentDivs[id].className = 'tabContent hide';
+        }
+      }
+
+      // Stop the browser following the link
+      return false;
+    }
+
+    function getFirstChildWithTagName( element, tagName ) {
+      for ( var i = 0; i < element.childNodes.length; i++ ) {
+        if ( element.childNodes[i].nodeName == tagName ) return element.childNodes[i];
+      }
+    }
+
+    function getHash( url ) {
+      var hashPos = url.lastIndexOf ( '#' );
+      return url.substring( hashPos + 1 );
+    }
+
+    //]]>
+    </script>        
+    
+</head>
+
+<body onload="init()">
+	
+  <h1>crispy</h1>
+  <h2>fast, flexible guideRNA design for gene editing</h2>
+  
+  <ul id="tabs">
+      <li><a href="#seqSearchTab">Raw Sequence Search</a></li>
+      <li><a href="#coordSearchTab">Coordinate Search</a></li>
+      <li><a href="#nameSearchTab">Gene Name Search</a></li>
+      <li><a href="#aboutCrisprTab">About CRISPR</a></li>
+      <li><a href="#aboutCrispyTab">About This Tool</a></li>
+  </ul>
+
+  <div class="tabContent" id="seqSearchTab">
+    <h2 id="seqSearchHeader">Search by Sequence</h2>
+    <div>
+      <form action="{{ url_for('seqSearch') }}" method = 'post'>
+  
+  <dl>
+    {{ render_field(seq_form.sequence) }}
+  </dl>
+  <p><input type=submit value=Search Sequence>
+</form>
+    </div>
+  </div>
+
+  <div class="tabContent" id="coordSearchTab">
+    <h2 id="coordSearchHeader">Search by Coordinate</h2>
+    <div>
+    <form action="{{ url_for('coordSearch') }}" method = 'post'>
+  <dl>
+    {{ render_field(coord_form.coordinate) }}
+  </dl>
+  <p><input type=submit value=Search Coordinate>
+</form>
+    </div>
+  </div>
+
+  <div class="tabContent" id="nameSearchTab">
+    <h2 id="nameSearchHeader">Search by Gene Name</h2>
+    <div>
+            <form action="{{ url_for('nameSearch') }}" method = 'post'>
+  
+  <dl>
+    {{ render_field(name_form.name) }}
+  </dl>
+  <p><input type=submit value=Search Name>
+</form>
+    </div>
+  </div>
+
+  <div class="tabContent" id="aboutCrisprTab">
+    {% include "partials/about_crispr.html" %}
+  </div>
+
+  <div class="tabContent" id="aboutCrispyTab">
+    {% include "partials/about_crispy.html" %}
+  </div>
+	
+
+</body>
+</html>
