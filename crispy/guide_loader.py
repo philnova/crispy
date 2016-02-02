@@ -12,6 +12,9 @@ def output(percent_complete):
 	sys.stdout.write('%s\r' % percent_complete)
 	sys.stdout.flush()
 
+def offtarget_score(sequence):
+	return .5
+
 def main(chrm_name, limit=float('inf')):
 	filename = 'MergedGuideRNA/chr'+str(chrm_name)+'.txt'
 	count = count_lines(filename)
@@ -25,11 +28,12 @@ def main(chrm_name, limit=float('inf')):
 				linelist = line.split()
 				chromosome, start, stop, sequence = str(chrm_name), int(linelist[1]), int(linelist[2]), linelist[3]
 				pam = sequence[-3:]
+				score = offtarget_score(sequence)
 				if linelist[-1] == 'F':
 					direction = 'forward'
 				else:
 					direction = 'reverse'
-				new.chromosome, new.start, new.stop, new.sequence, new.direction, new.organism, new.assembly, new.pam = chromosome, start, stop, sequence, direction, 'human', 'hg19', pam
+				new.chromosome, new.start, new.stop, new.sequence, new.direction, new.organism, new.assembly, new.pam, new.score = chromosome, start, stop, sequence, direction, 'human', 'hg19', pam, score
 				new.load()
 
 def all_chromosomes():
