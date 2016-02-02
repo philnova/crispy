@@ -104,6 +104,7 @@
   
   <dl>
     {{ render_field(seq_form.sequence) }}
+    {{ render_field(seq_form.species) }}
   </dl>
   <p><input type=submit value=Search Sequence>
 </form>
@@ -116,6 +117,7 @@
     <form action="{{ url_for('coordSearch') }}" method = 'post'>
   <dl>
     {{ render_field(coord_form.coordinate) }}
+    {{ render_field(coord_form.species) }}
   </dl>
   <p><input type=submit value=Search Coordinate>
 </form>
@@ -129,6 +131,7 @@
   
   <dl>
     {{ render_field(name_form.name) }}
+    {{ render_field(name_form.species) }}
   </dl>
   <p><input type=submit value=Search Name>
 </form>

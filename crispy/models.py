@@ -20,11 +20,13 @@ class Sequence(Base):
 	organism = Column(String, nullable=False)
 	assembly = Column(String, nullable=False)
 	sequence = Column(String, nullable = False)
-	chromosome = Column(Integer, nullable = False)
+	chromosome = Column(String, nullable = False)
 	start = Column(Integer, nullable = False)
 	stop = Column(Integer, nullable = False)
 	direction = Column(Enum('forward','reverse'), nullable=False)
+	pam = Column(String, nullable= False)
 	score = Column(Float)
+	gene = Column(String)
 	
 
 ## BOILERPLATE: NECESSARY FOR SQLALCHEMY
