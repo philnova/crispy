@@ -10,6 +10,8 @@ from crispy.models import Base, Sequence
 
 import datetime
 
+import RawSequence
+
 ###########
 # define forms
 ############
@@ -26,8 +28,6 @@ class CoordinateForm(BaseSearchForm):
 class GeneNameForm(BaseSearchForm):
 	name = StringField('Gene Name', [validators.Required()])
 
-
-	
 
 #app = Flask(__name__)
 
@@ -49,11 +49,18 @@ def seqSearch():
 	seq_form = RawSequenceForm(request.form)
 	if request.method == 'POST' and seq_form.validate():
 		species = seq_form.species.data
-		sequence = seq_form.sequence.data
-		return redirect(url_for('seqResults', sequence=sequence, species=species))
+		sequence_string = seq_form.sequence.data
+		seq = RawSequence.RawSequence(sequence_string, genome=species)
+		results = seq.score_all()
+		guides, offtargets, scores = [], [], []
+		for res in results:
+			guides.append(res[0])
+			offtargets.append(res[1])
+			scores.append(res[2])
+		return redirect(url_for('seqResults', sequence=sequence, species=species, guides=guides,offtargets=offtargets, scores=scores))
 
 @app.route('/seqResults/<string:species>/<string:sequence>')
-def seqResults(sequence, species):
+def seqResults(sequence, species, guides, offtargets, scores):
 	return render_template('seqResults.html',sequence=sequence, species=species)
 
 @app.route('/coordSearch', methods=['GET','POST'])
