@@ -3,7 +3,13 @@
 
 <h1>Search Results</h1>
 
-<p>Showing results for {{sequence}} from {{species}}<p>
+<p>Showing results for {{sequence}} from {{species}}</p>
+
+{% for idx in range(len(scores))%}
+
+<p>{{guides[idx]}} : {{scores[idx]}}
+
+{% endfor %}
 
 <a href="{{ url_for('mainPage') }}">Return Home</a>
 

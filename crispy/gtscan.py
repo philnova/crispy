@@ -290,7 +290,7 @@ def calculateGC(seq):
 
 # Creates a FASTA file with a seperate entry for every sequence in the dictionary 'sequences'.
 def createFastaFile(sequences):
-    faFileName = 'tmp/potentialofftargetstrings.fa'
+    faFileName = '/Users/philnova/github_repos/crispy_site/crispy/crispy/tmp/potentialofftargetstrings.fa'
     f = open(faFileName, 'w')
     for i in sequences:
         for j in sequences[i]:
@@ -301,9 +301,9 @@ def createFastaFile(sequences):
 # Calls Bowtie with user-specified parameters.
 # Input FASTA file name is the same as createFastaFile()
 def bowtieSearch(refGenome, H):
-    inputFile = 'tmp/potentialofftargetstrings.fa'
+    inputFile = '/Users/philnova/github_repos/crispy_site/crispy/crispy/tmp/potentialofftargetstrings.fa'
     alignments = 200
-    call= '{0} {1} -f {2} -k {3} -v 3 tmp/output.out'.format(bowtiePath,refGenome,inputFile,alignments)
+    call= '{0} {1} -f {2} -k {3} -v 3 /Users/philnova/github_repos/crispy_site/crispy/crispy/tmp/output.out'.format(bowtiePath,refGenome,inputFile,alignments)
     print call
     proc = sp.Popen(call,shell=True,stderr=sp.PIPE,stdout=sp.PIPE)
     stdout_value, stderr_value= proc.communicate()
@@ -426,7 +426,7 @@ def filterPotentialOffTargets(candidateTargets,potentialOffTargetStrings, refGen
     summary={}
     i=0
 
-    with open('tmp/output.out') as tsv:
+    with open('/Users/philnova/github_repos/crispy_site/crispy/crispy/tmp/output.out') as tsv:
         for line in csv.reader(tsv, dialect='excel-tab'):
             currentID = int(line[0])
             currentHamming = (len(line[7])+1)/6

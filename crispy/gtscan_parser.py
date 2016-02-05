@@ -1,4 +1,4 @@
-gt = __import__('gtscan')
+import gtscan as gt
 bowtiePath = '/Users/philnova/github_repos/crispy_site/bowtie-1.1.1/bowtie'
 import os
 

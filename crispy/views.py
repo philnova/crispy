@@ -17,7 +17,7 @@ import RawSequence
 ############
 
 class BaseSearchForm(Form):
-	species = RadioField(choices=[('human', 'Human (hg19)')], default='human')
+	species = RadioField(choices=[('GCA_000001405.15_GRCh38_no_alt_analysis_set', 'Human (GRCh38)')], default='GCA_000001405.15_GRCh38_no_alt_analysis_set')
 
 class RawSequenceForm(BaseSearchForm):
 	sequence = TextAreaField('Sequence', [validators.Required()])
@@ -50,18 +50,20 @@ def seqSearch():
 	if request.method == 'POST' and seq_form.validate():
 		species = seq_form.species.data
 		sequence_string = seq_form.sequence.data
+		sequence_string = sequence_string.encode('utf-8')
 		seq = RawSequence.RawSequence(sequence_string, genome=species)
+		print seq
 		results = seq.score_all()
 		guides, offtargets, scores = [], [], []
 		for res in results:
 			guides.append(res[0])
 			offtargets.append(res[1])
 			scores.append(res[2])
-		return redirect(url_for('seqResults', sequence=sequence, species=species, guides=guides,offtargets=offtargets, scores=scores))
+		return redirect(url_for('seqResults', sequence=sequence_string, species=species, guides=guides,offtargets=offtargets, scores=scores))
 
 @app.route('/seqResults/<string:species>/<string:sequence>')
 def seqResults(sequence, species, guides, offtargets, scores):
-	return render_template('seqResults.html',sequence=sequence, species=species)
+	return render_template('seqResults.html',sequence=sequence, species=species, guides=guides, offtargets=offtargets, scores=scores)
 
 @app.route('/coordSearch', methods=['GET','POST'])
 def coordSearch():
