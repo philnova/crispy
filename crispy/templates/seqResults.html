@@ -5,11 +5,44 @@
 
 <p>Showing results for {{sequence}} from {{species}}</p>
 
-{% for idx in range(len(scores))%}
+<h2> Good Guide Candidates </h2>
+<h3> On-Target Score above {{mediumcutoff}}% </h3>
 
-<p>{{guides[idx]}} : {{scores[idx]}}
+{% for idx in range(scores|length) %}
+{% if scores[idx] is high_quality %}
+
+<p>{{guides[idx]}} : {{scores[idx] * 100}}%
+
+{% endif %}
+{% endfor %}
+
+
+<h2> OK Guide Candidates </h2>
+<h3> On-Target Score >= {{lowcutoff}}% </h3>
+
+{% for idx in range(scores|length) %}
+
+{% if scores[idx] is medium_quality %}
+
+<p>{{guides[idx]}} : {{scores[idx] * 100}}%
+
+{% endif %}
 
 {% endfor %}
+
+
+<h2> Risky Guide Candidates </h2>
+<h3> On-Target Score below {{lowcutoff}}% </h3>
+
+{% for idx in range(scores|length) %}
+{% if scores[idx] is low_quality %}
+
+<p>{{guides[idx]}} : {{scores[idx] * 100}}%
+
+{% endif %}
+{% endfor %}
+
+
 
 <a href="{{ url_for('mainPage') }}">Return Home</a>
 

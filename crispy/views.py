@@ -12,6 +12,10 @@ import datetime
 
 import RawSequence
 
+import jinja2
+environment = jinja2.Environment() # you can define characteristics here, like telling it to load templates, etc
+
+
 ###########
 # define forms
 ############
@@ -28,6 +32,20 @@ class CoordinateForm(BaseSearchForm):
 class GeneNameForm(BaseSearchForm):
 	name = StringField('Gene Name', [validators.Required()])
 
+
+#jinja2 tests
+def high_quality(score):
+	return score >= .75
+
+def medium_quality(score):
+	return .5 <= score < .75
+
+def low_quality(score):
+	return score < .5
+
+environment.tests["high_quality"] = high_quality
+environment.tests["medium_quality"] = medium_quality
+environment.tests["low_quality"] = low_quality
 
 #app = Flask(__name__)
 
@@ -59,11 +77,9 @@ def seqSearch():
 			guides.append(res[0])
 			offtargets.append(res[1])
 			scores.append(res[2])
-		return redirect(url_for('seqResults', sequence=sequence_string, species=species, guides=guides,offtargets=offtargets, scores=scores))
+		return render_template('seqResults.html', sequence=sequence_string, species=species, guides=guides,offtargets=offtargets, scores=scores)
 
-@app.route('/seqResults/<string:species>/<string:sequence>')
-def seqResults(sequence, species, guides, offtargets, scores):
-	return render_template('seqResults.html',sequence=sequence, species=species, guides=guides, offtargets=offtargets, scores=scores)
+
 
 @app.route('/coordSearch', methods=['GET','POST'])
 def coordSearch():
