@@ -62,6 +62,7 @@ class RawSequence(object):
 	def __find_potential_guides(self):
 		self.forward_guides = scanForGuides(self.sequence,self.guidelength,self.motif)
 		self.reverse_guides = scanForGuides(self.revcomp,self.guidelength,self.motif)
+		return len(self.forward_guides) + len(self.reverse_guides) #count number of guides
 
 	def __find_offtarget(self,guide):
 		return gtp.find_offtargets(guide,self.genome)

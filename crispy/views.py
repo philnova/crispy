@@ -21,10 +21,10 @@ environment = jinja2.Environment() # you can define characteristics here, like t
 ############
 
 class BaseSearchForm(Form):
-	species = RadioField(choices=[('GCA_000001405.15_GRCh38_no_alt_analysis_set', 'Human (GRCh38)')], default='GCA_000001405.15_GRCh38_no_alt_analysis_set')
+	species = RadioField(choices=[('GCA_000001405.15_GRCh38_no_alt_analysis_set', 'Human (GRCh38)'),('mm8','Mouse (UCSC mm8)'),('d_melanogaster_fb5_22','D. melanogaster (Flybase r5.22)'),('c_elegans_ws200','C. Elegans (Wormbase WS200)'),('s_cerevisiae','S. Cerevisiae (CYGD)'),('e_coli','E. Coli (NCBI st.536)')], default='GCA_000001405.15_GRCh38_no_alt_analysis_set')
 
 class RawSequenceForm(BaseSearchForm):
-	sequence = TextAreaField('Sequence', [validators.Required()])
+	sequence = TextAreaField('Sequence', [validators.Required()], id="sequenceSearchField")
 
 class CoordinateForm(BaseSearchForm):
 	coordinate = StringField('Coordinate', [validators.Required()])
@@ -67,17 +67,37 @@ def seqSearch():
 	seq_form = RawSequenceForm(request.form)
 	if request.method == 'POST' and seq_form.validate():
 		species = seq_form.species.data
+
 		sequence_string = seq_form.sequence.data
+		sequence_string.strip()
+		sequence_string.replace(" ","")
 		sequence_string = sequence_string.encode('utf-8')
+		print sequence_string
+
 		seq = RawSequence.RawSequence(sequence_string, genome=species)
 		print seq
+
 		results = seq.score_all()
 		guides, offtargets, scores = [], [], []
+		
 		for res in results:
 			guides.append(res[0])
 			offtargets.append(res[1])
 			scores.append(res[2])
-		return render_template('seqResults.html', sequence=sequence_string, species=species, guides=guides,offtargets=offtargets, scores=scores)
+
+		goodGuides, mediumGuides, badGuides = False, False, False #flags to notify page whether any such guides exist
+		for score in scores:
+			if goodGuides and mediumGuides and badGuides:
+				break
+			else:
+				if score < 0.5:
+					badGuides = True
+				elif score < 0.75:
+					mediumGuides = True
+				else:
+					goodGuides = True
+
+		return render_template('seqResults.html', sequence=sequence_string, species=species, guides=guides,offtargets=offtargets, scores=scores, goodGuides = goodGuides, mediumGuides = mediumGuides, badGuides=badGuides)
 
 
 

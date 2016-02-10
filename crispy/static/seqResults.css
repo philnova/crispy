@@ -1,0 +1,8 @@
+body { font-size: 90%; font-family: 'Lucida Grande', Verdana, Arial, Sans-Serif;}
+body {
+width:900px;
+margin:24px auto;
+}
+div.goodSequence {background-color: #80ff80}
+div.mediumSequence {background-color: #ffff99}
+div.badSequence {background-color: #ff99cc}

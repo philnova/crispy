@@ -79,6 +79,24 @@
       return url.substring( hashPos + 1 );
     }
 
+    var search_time_per_guide = 5; //number of minutes estimated per guide search
+
+    jQuery(document).ready(function($) {
+
+      $('#seqSearchButton').click(function(){ //when user searches for sequence
+        var seq = document.getElementById("sequenceSearchField").value;
+        var f_seq = seq.substring(20,seq.length);
+        var r_seq = seq.substring(0,seq.length - 20)
+        var f_count = (f_seq.match(/GG/g) || []).length;
+        var r_count = (r_seq.match(/CC/g) || []).length;
+        var total_count = f_count + r_count
+        console.log(f_count, r_count, total_count)
+        $('#seqLoadArea').html('<img src="/static/loader.gif" ><li>'+total_count+' guide sequences detected in input.</li><li>Estimate '+total_count*search_time_per_guide+' minutes to complete query.</li><li>Please do not refresh!</li>') //display buffering symbol
+
+      })
+
+    });
+
     //]]>
     </script>        
     
@@ -106,7 +124,9 @@
     {{ render_field(seq_form.sequence) }}
     {{ render_field(seq_form.species) }}
   </dl>
-  <p><input type=submit value=Search Sequence>
+  <p><input id="seqSearchButton"type=submit value=Search Sequence></p>
+  <ul id="seqLoadArea"></ul>
+
 </form>
     </div>
   </div>

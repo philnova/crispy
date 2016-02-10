@@ -1,47 +1,58 @@
 <html>
+<head>
+	<title>sequence search results</title>
+	<link rel="stylesheet" href="static/seqResults.css">
+</head>
 <body>
 
 <h1>Search Results</h1>
 
 <p>Showing results for {{sequence}} from {{species}}</p>
 
+<div class="goodSequence">
 <h2> Good Guide Candidates </h2>
-<h3> On-Target Score above {{mediumcutoff}}% </h3>
+<h3> On-Target Score above 75% </h3>
 
-{% for idx in range(scores|length) %}
-{% if scores[idx] is high_quality %}
-
-<p>{{guides[idx]}} : {{scores[idx] * 100}}%
-
+{% if goodGuides == true %}
+	{% for idx in range(scores|length) %}
+		{% if scores[idx] >= 0.75 %}
+			<p>{{guides[idx]}} : {{scores[idx] * 100}}%</p>
+		{% endif %}
+	{% endfor %}
+{% else %}
+	<p> No High-Quality Guides were Found for this Sequence! </p>
 {% endif %}
-{% endfor %}
+</div>
 
-
+<div class="mediumSequence">
 <h2> OK Guide Candidates </h2>
-<h3> On-Target Score >= {{lowcutoff}}% </h3>
+<h3> On-Target Score >= 50% </h3>
 
-{% for idx in range(scores|length) %}
+{% if mediumGuides == true %}
+	{% for idx in range(scores|length) %}
+		{% if scores[idx] < 0.75 and scores[idx] >= 0.5 %}
+			<p>{{guides[idx]}} : {{scores[idx] * 100}}%</p>
+		{% endif %}
+	{% endfor %}
+{% else %}
+	<p> No Medium-Quality Guides were Found for this Sequence! </p>
+{% endif %}	
+</div>
 
-{% if scores[idx] is medium_quality %}
-
-<p>{{guides[idx]}} : {{scores[idx] * 100}}%
-
-{% endif %}
-
-{% endfor %}
-
-
+<div class="badSequence">
 <h2> Risky Guide Candidates </h2>
-<h3> On-Target Score below {{lowcutoff}}% </h3>
+<h3> On-Target Score below 50% </h3>
 
-{% for idx in range(scores|length) %}
-{% if scores[idx] is low_quality %}
-
-<p>{{guides[idx]}} : {{scores[idx] * 100}}%
-
-{% endif %}
-{% endfor %}
-
+{% if badGuides == true %}
+	{% for idx in range(scores|length) %}
+		{% if scores[idx] < 0.5 %}
+			<p>{{guides[idx]}} : {{scores[idx] * 100}}%</p>
+		{% endif %}
+	{% endfor %}
+{% else %}
+	<p> No Low-Quality Guides were Found for this Sequence! </p>
+{% endif %}	
+</div>
 
 
 <a href="{{ url_for('mainPage') }}">Return Home</a>
