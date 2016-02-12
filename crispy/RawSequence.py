@@ -50,8 +50,8 @@ def reverseComplement(nucleotides):
 class RawSequence(object):
 
 	def __init__(self, sequence_string, motif='NGG', guidelength=20, genome='GCA_000001405.15_GRCh38_no_alt_analysis_set'):
-		self.sequence = sequence_string
-		self.revcomp = gt.Seq(sequence_string,gt.generic_dna).reverse_complement().tostring()
+		self.sequence = sequence_string.upper()
+		self.revcomp = gt.Seq(self.sequence,gt.generic_dna).reverse_complement().tostring()
 		self.motif = motif
 		self.guidelength = guidelength
 		self.genome = genome
