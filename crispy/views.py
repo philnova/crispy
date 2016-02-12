@@ -15,6 +15,13 @@ import RawSequence
 import jinja2
 environment = jinja2.Environment() # you can define characteristics here, like telling it to load templates, etc
 
+###########
+## TO DO ##
+###########
+
+# confirm that sequence is actually present in target organism!
+# make sure i am using gt-scan correctly -- should we omit last three of sequence
+
 
 ###########
 # define forms
@@ -96,6 +103,8 @@ def seqSearch():
 					mediumGuides = True
 				else:
 					goodGuides = True
+
+		#print offtargets
 
 		return render_template('seqResults.html', sequence=sequence_string, species=species, guides=guides,offtargets=offtargets, scores=scores, goodGuides = goodGuides, mediumGuides = mediumGuides, badGuides=badGuides)
 

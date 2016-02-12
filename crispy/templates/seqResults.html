@@ -2,6 +2,100 @@
 <head>
 	<title>sequence search results</title>
 	<link rel="stylesheet" href="static/seqResults.css">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover(); //initializes popover windows
+        });
+    </script>
+
+    <style type="text/css" media="screen">
+        html{
+            margin: 0;
+            padding: 0;
+        }
+        
+        #project .modal-dialog {
+            margin-top: 200px;
+            width: 640px;
+            height: 480;
+        }
+        .hanging-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            z-index: 9001;
+        }
+        #project-video {
+            width: 100%;
+            height: 100%;
+        }
+        .project-tile {
+            margin-bottom: 20px;
+            padding-top: 20px;
+
+        }
+        .project-tile:hover {
+            background-color: #EEE;
+            cursor: pointer;
+        }
+        .scale-media {
+            padding-bottom: 56.25%;
+            max-height: 200px;
+            position: relative;
+        }
+        .modal-body {
+            
+            max-height: calc(100vh - 210px);
+    		overflow-y: auto;
+        }
+
+        .modal-footer {
+            text-align: center;
+        }
+
+        .scale-media iframe {
+            border: none;
+            height: 100%;
+            max-height: 200px;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            background-color: white;
+        }
+
+        .modal-footer {
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer {
+            text-align: center;
+            display: inline-block;
+            width: 100%;
+
+        }
+
+        .footer-link {
+            text-align: center;
+            display: inline-block;
+            width: 33%;
+            color: grey;
+            line-height: 50px;
+            font-size: 100%;
+
+        }
+
+        th {text-align:center}
+
+
+    </style>
+
 </head>
 <body>
 
@@ -9,16 +103,58 @@
 
 <p>Showing results for {{sequence}} from {{species}}</p>
 
+<p>Click on any individual guide sequence for off-target information</p>
+
 <div class="goodSequence">
 <h2> Good Guide Candidates </h2>
 <h3> On-Target Score above 75% </h3>
 
-{% if goodGuides == true %}
-	{% for idx in range(scores|length) %}
-		{% if scores[idx] >= 0.75 %}
-			<p>{{guides[idx]}} : {{scores[idx] * 100}}%</p>
+{% for idx in range(scores|length) %}
+		{% if scores[idx] > 0.75 %}
+			<p><a href="#" data-toggle="modal" data-target="#{{guides[idx]}}">
+			{{guides[idx]}} : {{scores[idx] * 100}}%
+			</a></p>
 		{% endif %}
 	{% endfor %}
+
+{% if goodGuides == true %}
+
+	
+
+	{% for idx in range(scores|length) %}
+		{% if scores[idx] > 0.75 %}
+			<div class="modal fade" role="dialog" id="{{guides[idx]}}">
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+    		<a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+        	<img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+    		</a>
+    		<h1>Off-Targets Found for Sequence:</h1>
+    		<p>{{guides[idx]}}</p>
+			</div>
+			    <div class="modal-body">
+			    	<table>
+			    		<tr>
+			    			<th> Strand </th> <th> Chromosome </th> <th> Coordinate </th> <th> Sequence </th>
+			    		</tr>
+			    		{% for off in offtargets[idx].values() %}
+			    			<tr>
+
+			    				<td>{{off[0]}}</td> <td>{{off[1]}}</td> <td>{{off[2]}}</td> <td>{{off[3]}}</td>
+			    			</tr>
+			    		{% endfor %}
+			    	</table>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			    </div>
+			</div>
+			</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+
 {% else %}
 	<p> No High-Quality Guides were Found for this Sequence! </p>
 {% endif %}
@@ -31,7 +167,38 @@
 {% if mediumGuides == true %}
 	{% for idx in range(scores|length) %}
 		{% if scores[idx] < 0.75 and scores[idx] >= 0.5 %}
-			<p>{{guides[idx]}} : {{scores[idx] * 100}}%</p>
+			<p><a href="#" data-toggle="modal" data-target="#{{guides[idx]}}">
+			{{guides[idx]}} : {{scores[idx] * 100}}%
+			</a></p>
+
+			<div class="modal fade" role="dialog" id="{{guides[idx]}}">
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+    		<a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+        	<img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+    		</a>
+    		<h1>Off-Targets Found for Sequence:</h1>
+    		<p>{{scores[idx]}}</p>
+			</div>
+			    <div class="modal-body">
+			    	<table>
+			    		<tr>
+			    			<th>Strand</th> <th>Chromosome</th> <th>Coordinate</th> <th>Sequence</th>
+			    		</tr>
+			    		{% for off in offtargets[idx].values() %}
+			    			<tr>
+			    				<td>{{off[0]}}</td> <td>{{off[1]}}</td> <td>{{off[2]}}</td> <td>{{off[3]}}</td>
+			    			</tr>
+			    		{% endfor %}
+			    	</table>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			    </div>
+			</div>
+			</div>
+			</div>
 		{% endif %}
 	{% endfor %}
 {% else %}
@@ -46,7 +213,38 @@
 {% if badGuides == true %}
 	{% for idx in range(scores|length) %}
 		{% if scores[idx] < 0.5 %}
-			<p>{{guides[idx]}} : {{scores[idx] * 100}}%</p>
+			<p><a href="#" data-toggle="modal" data-target="#{{guides[idx]}}">
+			{{guides[idx]}} : {{scores[idx] * 100}}%
+			</a></p>
+
+			<div class="modal fade" role="dialog" id="{{guides[idx]}}">
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+    		<a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+        	<img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+    		</a>
+    		<h1>Off-Targets Found for Sequence:</h1>
+    		<p>{{guides[idx]}}</p>
+			</div>
+			    <div class="modal-body">
+			    	<table>
+			    		<tr>
+			    			<th>Strand</th> <th>Chromosome</th> <th>Coordinate</th> <th>Sequence</th>
+			    		</tr>
+			    		{% for off in offtargets[idx].values() %}
+			    			<tr>
+			    				<td>{{off[0]}}</td> <td>{{off[1]}}</td> <td>{{off[2]}}</td> <td>{{off[3]}}</td>
+			    			</tr>
+			    		{% endfor %}
+			    	</table>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			    </div>
+			</div>
+			</div>
+			</div>
 		{% endif %}
 	{% endfor %}
 {% else %}
